@@ -1,0 +1,23 @@
+{
+  "name": "tnucore",
+  "version": "1.0.0",
+  "description": "TNU Core - Library for working with private student data in TNU System.",
+  "main": "TnuCore.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tnusocial/TnuCore.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tnusocial/TnuCore/issues"
+  },
+  "homepage": "https://github.com/tnusocial/TnuCore#readme",
+  "dependencies": {
+    "jsdom": "^12.0.0",
+    "request": "^2.88.0"
+  }
+}
