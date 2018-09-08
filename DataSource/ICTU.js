@@ -74,3 +74,7 @@ module.exports = function () {
         });
     }
 };
+
+module.exports["Name"] = "ICTU";
+module.exports["Title"] = "Đại học Công Nghệ Thông Tin và Truyền Thông";
+module.exports["Description"] = "ICTU";
