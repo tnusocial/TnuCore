@@ -1,19 +1,20 @@
 const request = require('request');
-const jsdom = require('jsdom');
-var ictu = require("./DataSource/ICTU");
+const cheerio = require('cheerio');
+const { JSDOM } = require('jsdom');
 
-function Login (username, password) {
-    ictu.Login(username, password, function (a,b,c) {
-        var dom = new jsdom.JSDOM(c);
-        var document = dom.document;
-        console.log(dom.window.document.forms[0].formData);
-    });
-}
+var ICTU = require("./DataSource/ICTU");
 
-exports.Login = Login;
-
-exports.test = function () {
-    request("http://dangkytinchi.ictu.edu.vn/kcntt/login.aspx", function (err, resp, body) {
-        console.log(body);
-    });
+var TnuSchools = {
+    "ICTU": ICTU,
+    "DTC": ICTU,
 };
+
+function Open (schoolCode) {
+    if (!!TnuSchools[schoolCode]) {
+        return new TnuSchools[schoolCode];
+    }
+    var ictu = new ICTU();
+};
+
+module.exports.TnuSchools = TnuSchools;
+module.exports.Open = Open;
