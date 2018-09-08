@@ -1,3 +1,3 @@
 const core = require('./TnuCore');
 
-core.Login();
+core.test();
