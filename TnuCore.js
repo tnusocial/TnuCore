@@ -13,7 +13,6 @@ function Open (schoolCode) {
     if (!!TnuSchools[schoolCode]) {
         return new TnuSchools[schoolCode];
     }
-    var ictu = new ICTU();
 };
 
 module.exports.TnuSchools = TnuSchools;
