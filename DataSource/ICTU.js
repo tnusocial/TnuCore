@@ -5,6 +5,8 @@ const TnuBase = require('./TnuBase');
 const TnuFile = require('../DataStruct/TnuFile');
 const TnuNews = require('../DataStruct/TnuNews');
 const TnuNewsDetail = require('../DataStruct/TnuNewsDetail');
+const TnuProfile = require('../DataStruct/TnuProfile');
+const TnuSemester = require('../DataStruct/TnuSemester');
 
 const Endpoints = {
     Raw: function (path) {
@@ -32,7 +34,13 @@ module.exports = function () {
 
     var base = new TnuBase();
 
-    var User = {};
+    var User = {
+        Username: null,
+        Password: null
+    };
+    User.IsLogined = function () {
+        return User.Username != null && User.Password != null;
+    }
 
     this.Login = function (username, password) {
         username = username || false;
@@ -152,10 +160,53 @@ module.exports = function () {
         return new Promise(function(resolve, reject) {
             base.Get(Endpoints.Make("MarkAndView.aspx")).then(function (resp) {
                 var $ = base.ParseHtml(resp);
-
+                var idElement = $("#drpStudent option[selected]");
+                var id = idElement.val(),
+                    code = User.Username,
+                    name = idElement.text(),
+                    _class = $("#drpAdminClass option[selected]").text(),
+                    major = $("#drpField option[selected]").text(),
+                    academicYear = $("#drpAcademicYear option[selected]").text(),
+                    hedaotao = $("#drpHeDaoTaoId option[selected]").text();
+                resolve(new TnuProfile(id, code, name, _class, major, academicYear, hedaotao));
             }, reject);
         });
     }
+
+    this.GetSemestersIn = function (uri) {
+        return new Promise(function(resolve, reject) {
+            base.Get(Endpoints.Make(uri)).then(function (resp) {
+                var $ = base.ParseHtml(resp);
+                var result = [];
+                $("select[name='drpSemester'] option").each(function (k, opt) {
+                    opt = $(opt);
+
+                    result.push(new TnuSemester(
+                        opt.val(),
+                        opt.text(),
+                        !!opt.attr("selected")
+                    ));
+                });
+                resolve(result);
+            }, reject);
+        });
+    };
+
+    this.GetSemestersOfStudy = function () {
+        return this.GetSemestersIn("Reports/Form/StudentTimeTable.aspx");
+    };
+
+    this.GetSemestersOfExam = function () {
+        return this.GetSemestersIn("StudentViewExamList.aspx");
+    };
+
+    this.GetTimeTableOfStudy = function (semesterId) {
+        return new Promise(function(resolve, reject) {
+            base.Get(Endpoints.Make("Reports/Form/StudentTimeTable.aspx")).then(function (resp) {
+                var $ = base.ParseHtml(resp);
+            }, reject);
+        });
+    };
 };
 
 module.exports["Name"] = "ICTU";
