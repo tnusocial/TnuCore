@@ -25,22 +25,24 @@ module.exports = function () {
     this.ParseHtml = function (htmlString) {
         return cheerio.load(htmlString);
     };
-    this.Get = function (url) {
+    this.Get = function (url, callback) {
         return Client.get(
             {
                 headers: __HEADERS__,
                 jar: __JAR__,
                 url: url,
+                callback: callback,
             }
         );
     };
-    this.Post = function (url, data) {
+    this.Post = function (url, data, callback) {
         return Client.post(
             {
                 headers: __HEADERS__,
                 jar: __JAR__,
                 url: url,
                 form: data,
+                callback: callback,
             }
         );
     };
@@ -52,20 +54,22 @@ module.exports.ParseHtml = function (htmlString) {
 
 module.exports.Client =  request; // init default client
 
-module.exports.Get = function (url) {
+module.exports.Get = function (url, callback) {
     return request.get(
         {
             followAllRedirects: true,
             url: url,
+            callback: callback,
         }
     );
 };
-module.exports.Post = function (url, data) {
+module.exports.Post = function (url, data, callback) {
     return request.post(
         {
             followAllRedirects: true,
             url: url,
             form: data,
+            callback: callback,
         }
     );
 };

@@ -1,6 +1,6 @@
 {
   "name": "tnucore",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "TNU Core - Library for working with private student data in TNU System.",
   "main": "TnuCore.js",
   "scripts": {
@@ -22,6 +22,7 @@
     "md5": "^2.2.1",
     "moment": "^2.22.2",
     "request": "^2.88.0",
-    "request-promise-native": "^1.0.5"
+    "request-promise-native": "^1.0.5",
+    "xls-parse": "^1.0.4"
   }
 }
