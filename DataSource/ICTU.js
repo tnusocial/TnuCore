@@ -281,7 +281,9 @@ module.exports = function () {
                         .on("finish", function () {
                             var sheets = xlsParse.xls2Obj(xlsFilePath);
                             fs.unlinkSync(xlsFilePath);
-                            data.push(xlsFilePath, sheets);
+                            // data.push(xlsFilePath, sheets);
+                            var raw = fs.readFileSync(xlsFilePath, "utf8");
+                            var $ = base.ParseHtml(raw.substr(raw.indexOf('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >')));
 
                             for (var sheetName in sheets) {
                                 var sheet = sheets[sheetName];
@@ -294,6 +296,7 @@ module.exports = function () {
                                         var tenMon = row[3];
                                         var hocPhan = row[4];
                                         var giaoVien = row[7];
+                                        var dot = $("#drpTerm option[selected]").text().trim();
 
                                         var hinhThuc =
                                             hocPhan.match(/\.TL[0-9]/ig) ? "TL" : false
@@ -334,7 +337,7 @@ module.exports = function () {
                                             while (pivot.getDay() != thu) {
                                                 pivot.setDate(pivot.getDate() + 1);
                                             }
-                                            var entry = new TnuTimeTableEntry(maMon, pivot, tiets, diaDiem, hinhThuc, giaoVien);
+                                            var entry = new TnuTimeTableEntry(maMon, pivot, tiets, diaDiem, hinhThuc, giaoVien, dot);
                                             tkb.Entries.push(entry);
                                         }
 
@@ -355,6 +358,103 @@ module.exports = function () {
             }, reject);
         });
     };
+
+    this.GetTimeTableOfExam = function (semesterId) {
+        return new Promise(function(resolve, reject) {
+            base.Get(Endpoints.Make("StudentViewExamList.aspx")).then(function (resp) {
+                var $ = base.ParseHtml(resp);
+
+                var post = {};
+                $("#Form1").serializeArray().forEach(function (entry) {
+                    post[entry.name] = entry.value;
+                });
+
+                post["drpSemester"] = semesterId;
+
+                base.Post(Endpoints.Make(__URLTOKEN__ + "StudentViewExamList.aspx"), post).then(function (resp) {
+                    $ = base.ParseHtml(resp);
+
+                    $("#Form1").serializeArray().forEach(function (entry) {
+                        post[entry.name] = entry.value;
+                    });
+
+                    post["drpSemester"] = semesterId;
+
+                    var DotThis = [];
+
+                    $("#drpDotThi option").each (function (k, dotThi) {
+                        if (k > 0) {
+                            DotThis.push($(dotThi).val());
+                        }
+                    });
+
+                    var Result = new TnuTimeTable();
+                    var ResultStep = 0;
+
+                    var processExamData = function (html) {
+                        var $ = base.ParseHtml(html);
+
+                        $("#tblCourseList tr").each(function (i, tr) {
+                            if (i > 0) {
+                                var arr = [];
+                                $(tr).find("td").each(function (i, td) {
+                                    arr.push($(td).text().trim());
+                                });
+
+                                if (arr.length < 10) {
+                                    return;
+                                }
+
+                                var subject = new TnuSubject(
+                                    arr[1],
+                                    arr[2],
+                                    arr[2],
+                                    arr[3]
+                                );
+                                var entry = new TnuTimeTableEntry(
+                                    arr[1],
+                                    arr[4],
+                                    [arr[5]],
+                                    arr[8],
+                                    arr[6],
+                                    "",
+                                    $("#drpDotThi option[selected]").text().trim() + " | " + $("#drpExaminationNumber option[selected]").text().trim(),
+                                    arr[7],
+                                    arr[9],
+                                );
+
+                                Result.Subjects.push(subject);
+                                Result.Entries.push(entry);
+                            }
+                        });
+
+                        ResultStep++;
+                        if (ResultStep >= DotThis.length * 2) {
+                            resolve(Result);
+                        }
+                    }
+
+                    if (DotThis.length == 0) {
+                        DotThis.push(false);
+                    }
+                    DotThis.forEach(function (dotThi) {
+                        if (!!dotThi) {
+                            post["drpDotThi"] = dotThi;
+                        } else {
+                            delete post["drpDotThi"];
+                        }
+                        for (var drpExaminationNumber = 0; drpExaminationNumber <= 1; drpExaminationNumber++) {
+                            post["drpExaminationNumber"] = drpExaminationNumber;
+
+                            base.Post(Endpoints.Make(__URLTOKEN__ + "StudentViewExamList.aspx"), post)
+                                .then(processExamData, reject);
+                        }
+                    });
+
+                }, reject);
+            }, reject);
+        });
+    }
 };
 
 module.exports["Name"] = "ICTU";
