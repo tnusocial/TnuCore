@@ -280,9 +280,9 @@ module.exports = function () {
                         })
                         .on("finish", function () {
                             var sheets = xlsParse.xls2Obj(xlsFilePath);
+                            var raw = fs.readFileSync(xlsFilePath, "utf8");
                             fs.unlinkSync(xlsFilePath);
                             // data.push(xlsFilePath, sheets);
-                            var raw = fs.readFileSync(xlsFilePath, "utf8");
                             var $ = base.ParseHtml(raw.substr(raw.indexOf('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >')));
 
                             for (var sheetName in sheets) {
