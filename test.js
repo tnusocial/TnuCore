@@ -32,20 +32,23 @@ ictu.Login(process.argv[2], process.argv[3]).then(function (session) {
         //         // });
         //     }, console.log);
         // }, console.log);
-        ictu.GetSemestersOfExam().then(function (resp) {
-            console.log("\n\nDanh sách kỳ thi:");
-            console.log(resp);
-            var code = resp[4];
-            console.log("Get: ", code);
-            ictu.GetTimeTableOfExam(code.MaKy).then(function (resp) {
-                console.log("\n\nLịch thi:");
-                console.log(resp);
-                // console.log(JSON.stringify(resp));
-                // resp.forEach(function (x) {
-                //     console.log(x);
-                // });
-            }, console.log);
-        }, console.log);
+        // ictu.GetSemestersOfExam().then(function (resp) {
+        //     console.log("\n\nDanh sách kỳ thi:");
+        //     console.log(resp);
+        //     var code = resp[4];
+        //     console.log("Get: ", code);
+        //     ictu.GetTimeTableOfExam(code.MaKy).then(function (resp) {
+        //         console.log("\n\nLịch thi:");
+        //         console.log(resp);
+        //         // console.log(JSON.stringify(resp));
+        //         // resp.forEach(function (x) {
+        //         //     console.log(x);
+        //         // });
+        //     }, console.log);
+        // }, console.log);
+
+
+        ictu.GetMarkTable().then(console.log, console.log);
     }
 }, function (err) {
     console.log(err);

@@ -14,6 +14,7 @@ const TnuSemester = require('../DataStruct/TnuSemester');
 const TnuSubject = require('../DataStruct/TnuSubject');
 const TnuTimeTableEntry = require('../DataStruct/TnuTimeTableEntry');
 const TnuTimeTable = require('../DataStruct/TnuTimeTable');
+const TnuMarkTable = require('../DataStruct/TnuMarkTable');
 
 const Endpoints = {
     Raw: function (path) {
@@ -451,6 +452,59 @@ module.exports = function () {
                         }
                     });
 
+                }, reject);
+            }, reject);
+        });
+    }
+
+    this.GetMarkTable = function () {
+        return new Promise(function (resolve, reject) {
+            base.Get(Endpoints.Make(__URLTOKEN__ + "MarkAndView.aspx")).then(function (resp) {
+                var $ = base.ParseHtml(resp);
+
+                var post = {};
+                $("#Form1").serializeArray().forEach(function (entry) {
+                    post[entry.name] = entry.value;
+                });
+
+                post["btnView"] = "Xem";
+
+                base.Post(Endpoints.Make(__URLTOKEN__ + "MarkAndView.aspx"), post).then(function (resp) {
+                    var $ = base.ParseHtml(resp);
+
+                    var arr = {
+                        labels: [],
+                        values: []
+                    };
+
+                    $("#tblStudentMark tr").each(function (k, tr) {
+                        if (k == 0) {
+                            $(tr).find("td").each(function (_k,td) {
+                                arr.labels.push($(td));
+                            });
+                        } else if (k == 2) {
+                            $(tr).find("td").each(function (_k,td) {
+                                arr.values.push($(td));
+                            });
+                        }
+                    });
+
+                    var tb = new TnuMarkTable();
+                    tb.TongSoTC             = arr.values[4].text();
+                    tb.SoTCTuongDuong       = arr.values[5].text();
+                    tb.STCTLN               = arr.values[6].text();
+                    tb.DTBC                 = arr.values[7].text();
+                    tb.DTBCQD               = arr.values[8].text();
+                    tb.SoMonKhongDat        = arr.values[9].text();
+                    tb.SoTCKhongDat         = arr.values[10].text();
+                    tb.DTBXLTN              = arr.values[11].text();
+                    tb.DTBMonTN             = arr.values[12].text();
+
+                    for (var i = 13; i < arr.labels.length; i++) {
+
+                    }
+
+                    resolve([tb, arr]);
                 }, reject);
             }, reject);
         });
