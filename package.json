@@ -1,6 +1,6 @@
 {
   "name": "tnucore",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "TNU Core - Library for working with private student data in TNU System.",
   "main": "TnuCore.js",
   "scripts": {

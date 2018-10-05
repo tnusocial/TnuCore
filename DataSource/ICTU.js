@@ -48,6 +48,10 @@ var ICTU_WDAY = {
 };
 
 module.exports = function () {
+    this["Name"] = "ICTU";
+    this["Title"] = "Đại học Công Nghệ Thông Tin và Truyền Thông";
+    this["Description"] = "ICTU";
+
     var __URLTOKEN__ = "";
 
     var base = new TnuBase();
@@ -474,6 +478,7 @@ module.exports = function () {
 
                     var arr = {
                         labels: [],
+                        keys: [],
                         values: []
                     };
 
@@ -481,6 +486,10 @@ module.exports = function () {
                         if (k == 0) {
                             $(tr).find("td").each(function (_k,td) {
                                 arr.labels.push($(td));
+                            });
+                        } else if (k == 1) {
+                            $(tr).find("td").each(function (_k,td) {
+                                arr.keys.push($(td));
                             });
                         } else if (k == 2) {
                             $(tr).find("td").each(function (_k,td) {
@@ -500,11 +509,39 @@ module.exports = function () {
                     tb.DTBXLTN              = arr.values[11].text();
                     tb.DTBMonTN             = arr.values[12].text();
 
-                    for (var i = 13; i < arr.labels.length; i++) {
 
+                    pivot = 13;
+                    for (var i = 1; i < arr.labels.length; i++) {
+                        var label = arr.labels[i];
+                        var numCols = parseInt(label.attr("colspan"));
+                        var txt = label.text().trim();
+                        var txts = txt.split("_", 2);
+                        if (numCols && txts.length == 2) {
+
+                            var maMon = txts[0];
+                            var tenMon = txts[1].substr(0, txts[1].length - 4) ;
+                            var soTC = txts[1].substr(-2,1);
+
+                            var point = {
+                                CC: "",
+                                THI: "",
+                                TKHP: "",
+                                "Chữ": ""
+                            };
+
+                            for (var j = pivot; j < pivot + numCols; j++) {
+                                var key = arr.keys[j].text().trim();
+                                var val = arr.values[j].text().trim();
+                                point[key] = val;
+                            }
+
+                            tb.AddEntry(maMon, tenMon, soTC, txt, point.CC, point.THI, point.TKHP, point["Chữ"], point);
+
+                            pivot += numCols;
+                        }
                     }
 
-                    resolve([tb, arr]);
+                    resolve([tb]);
                 }, reject);
             }, reject);
         });

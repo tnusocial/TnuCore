@@ -1,3 +1,5 @@
+const TnuMarkTableEntry = require('../DataStruct/TnuMarkTableEntry');
+
 module.exports = function () {
     this.TongSoTC = 0;
     this.SoTCTuongDuong = 0;
@@ -10,17 +12,7 @@ module.exports = function () {
     this.DTBMonTN = 0;
     this.Entries = [];
 
-    this.addEntry = function (MaMon, TenMon, SoTC, TenMonDayDu, CC, Thi, TKHP, DiemChu) {
-        this.Entries.push({
-            MaMon: MaMon,
-            TenMon: TenMon,
-            SoTC: SoTC,
-            TenMonDayDu: TenMonDayDu,
-            
-            CC: CC,
-            Thi: Thi,
-            TKHP: TKHP,
-            DiemChu: DiemChu
-        });
+    this.AddEntry = function (MaMon, TenMon, SoTC, TenMonDayDu, CC, Thi, TKHP, DiemChu, raw) {
+        this.Entries.push(new TnuMarkTableEntry(MaMon, TenMon, SoTC, TenMonDayDu, CC, Thi, TKHP, DiemChu, raw));
     }
 };
