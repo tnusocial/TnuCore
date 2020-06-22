@@ -184,13 +184,14 @@ module.exports = function () {
                 var $ = base.ParseHtml(resp);
                 var idElement = $("#drpStudent option[selected]");
                 var id = idElement.val(),
+                    truong = "ICTU",
                     code = User.Username,
                     name = idElement.text(),
                     _class = $("#drpAdminClass option[selected]").text(),
                     major = $("#drpField option[selected]").text(),
                     academicYear = $("#drpAcademicYear option[selected]").text(),
                     hedaotao = $("#drpHeDaoTaoId option[selected]").text();
-                resolve(new TnuProfile(id, code, name, _class, major, academicYear, hedaotao));
+                resolve(new TnuProfile(truong,id, code, name, _class, major, academicYear, hedaotao));
             }, reject);
         });
     }

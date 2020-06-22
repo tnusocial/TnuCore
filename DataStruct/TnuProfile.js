@@ -1,9 +1,10 @@
-module.exports = function (id, code, name, _class, major, academicYear, hedaotao) {
+module.exports = function (truong,id, code, name, _class, major, academicYear, hedaotao) {
+    this.Truong = truong || "";
     this.Id = id || "";
     this.MaSinhVien = code || "";
-    this.Ten = name || "";
+    this.HoTen = name || "";
     this.Lop = _class || "";
     this.Nganh = major || "";
-    this.NamHoc = academicYear || "";
+    this.NienKhoa = academicYear || "";
     this.HeDaoTao = hedaotao || "";
 };
